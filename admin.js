@@ -1,63 +1,14 @@
-// A custom alert function to avoid using the native alert/confirm.
-function showCustomAlert(title, message, isConfirm = false) {
-    return new Promise(resolve => {
-        const modalOverlay = document.getElementById('modal-overlay');
-        const customAlert = document.getElementById('custom-alert');
-        const alertTitle = customAlert.querySelector('h2');
-        const alertMessage = customAlert.querySelector('p');
-        const alertOkBtn = document.getElementById('alert-ok-btn');
-        const alertCancelBtn = document.getElementById('alert-cancel-btn');
-
-        alertTitle.textContent = title;
-        alertMessage.textContent = message;
-        
-        // This is a special overlay for the admin page
-        const adminModalOverlay = document.createElement('div');
-        adminModalOverlay.className = 'modal-overlay';
-        adminModalOverlay.id = 'admin-modal-overlay';
-        adminModalOverlay.innerHTML = customAlert.outerHTML;
-        document.body.appendChild(adminModalOverlay);
-        
-        const currentCustomAlert = adminModalOverlay.querySelector('#custom-alert');
-        currentCustomAlert.classList.remove('hidden');
-        
-        const currentAlertOkBtn = adminModalOverlay.querySelector('#alert-ok-btn');
-        const currentAlertCancelBtn = adminModalOverlay.querySelector('#alert-cancel-btn');
-
-        currentAlertOkBtn.onclick = () => {
-            adminModalOverlay.remove();
-            resolve(true);
-        };
-
-        if (isConfirm) {
-            currentAlertCancelBtn.classList.remove('hidden');
-            currentAlertCancelBtn.onclick = () => {
-                adminModalOverlay.remove();
-                resolve(false);
-            };
-        } else {
-            currentAlertCancelBtn.classList.add('hidden');
-        }
-    });
-}
-// Replace the native confirm with our custom one
-window.confirm = (message) => showCustomAlert('تأكيد', message, true);
-window.alert = (message) => showCustomAlert('تنبيه', message);
-
-// Firebase Initialization
-const app = firebase.initializeApp(firebaseConfig);
+// تهيئة Firebase
 const db = firebase.firestore();
-const auth = firebase.auth();
 
-// DOM elements
-const adminLoading = document.getElementById('admin-loading');
-const adminContent = document.getElementById('admin-content');
+// عناصر الصفحة
 const siteSettingsForm = document.getElementById('site-settings-form');
 const siteTitleInput = document.getElementById('site-title');
 const siteDescriptionInput = document.getElementById('site-description');
 const siteBannerImageInput = document.getElementById('site-banner-image');
 const sitePasswordInput = document.getElementById('site-password');
 const isSiteLockedCheckbox = document.getElementById('is-site-locked');
+
 const addGameBtn = document.getElementById('add-game-btn');
 const gameListContainer = document.getElementById('game-list');
 const gameModal = document.getElementById('game-modal');
@@ -73,39 +24,7 @@ const gamePasswordInput = document.getElementById('game-password');
 const isGameVisibleCheckbox = document.getElementById('is-game-visible');
 const closeModalBtn = document.querySelector('.close-btn');
 
-// Check admin privileges on page load
-auth.onAuthStateChanged(async (user) => {
-    if (user) {
-        try {
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            if (userDoc.exists && userDoc.data().isAdmin) {
-                // User is an admin, show content and hide loading screen
-                adminLoading.classList.add('hidden');
-                adminContent.classList.remove('hidden');
-                loadSiteSettings();
-                loadGames();
-            } else {
-                // Not an admin, show error, hide loading screen, and redirect
-                adminLoading.classList.add('hidden');
-                alert('ليس لديك صلاحيات الوصول إلى هذه الصفحة.');
-                window.location.href = 'index.html';
-            }
-        } catch (error) {
-            console.error('Error checking admin status:', error);
-            // In case of any error, hide loading screen and redirect
-            adminLoading.classList.add('hidden');
-            alert('حدث خطأ أثناء التحقق من الصلاحيات. الرجاء التأكد من أن لديك إذن الوصول.');
-            window.location.href = 'index.html';
-        }
-    } else {
-        // Not logged in, show error, hide loading screen, and redirect
-        adminLoading.classList.add('hidden');
-        alert('الرجاء تسجيل الدخول للوصول إلى لوحة التحكم.');
-        window.location.href = 'index.html';
-    }
-});
-
-// Load site settings
+// تحميل إعدادات الموقع الحالية
 function loadSiteSettings() {
     db.collection('settings').doc('site-info').get().then(doc => {
         if (doc.exists) {
@@ -119,7 +38,7 @@ function loadSiteSettings() {
     });
 }
 
-// Save site settings
+// حفظ إعدادات الموقع
 siteSettingsForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const settings = {
@@ -134,11 +53,11 @@ siteSettingsForm.addEventListener('submit', (e) => {
             alert('تم حفظ إعدادات الموقع بنجاح!');
         })
         .catch(error => {
-            console.error('Error saving settings: ', error);
+            console.error('خطأ في حفظ الإعدادات: ', error);
         });
 });
 
-// Load games list
+// تحميل قائمة الألعاب
 function loadGames() {
     gameListContainer.innerHTML = '<p>جاري تحميل الألعاب...</p>';
     db.collection('games').onSnapshot(snapshot => {
@@ -162,6 +81,7 @@ function loadGames() {
             gameListContainer.appendChild(gameCard);
         });
 
+        // إضافة مستمعين لحدث التعديل والحذف
         document.querySelectorAll('.edit-btn').forEach(button => {
             button.addEventListener('click', (e) => editGame(e.target.dataset.id));
         });
@@ -171,7 +91,7 @@ function loadGames() {
     });
 }
 
-// Open add/edit modal
+// فتح نافذة الإضافة/التعديل
 addGameBtn.addEventListener('click', () => {
     modalTitle.textContent = 'إضافة لعبة جديدة';
     gameForm.reset();
@@ -189,7 +109,7 @@ window.addEventListener('click', (e) => {
     }
 });
 
-// Edit game
+// تعديل لعبة
 function editGame(id) {
     db.collection('games').doc(id).get().then(doc => {
         if (doc.exists) {
@@ -208,7 +128,7 @@ function editGame(id) {
     });
 }
 
-// Save/Update game
+// حفظ/تعديل لعبة
 gameForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const gameData = {
@@ -222,37 +142,43 @@ gameForm.addEventListener('submit', (e) => {
     };
     
     if (gameIdInput.value) {
+        // تعديل
         db.collection('games').doc(gameIdInput.value).update(gameData)
             .then(() => {
                 alert('تم تحديث اللعبة بنجاح!');
                 gameModal.style.display = 'none';
             })
             .catch(error => {
-                console.error('Error updating game: ', error);
+                console.error('خطأ في التحديث: ', error);
             });
     } else {
+        // إضافة
         db.collection('games').add(gameData)
             .then(() => {
                 alert('تم إضافة اللعبة بنجاح!');
                 gameModal.style.display = 'none';
             })
             .catch(error => {
-                console.error('Error adding game: ', error);
+                console.error('خطأ في الإضافة: ', error);
             });
     }
 });
 
-// Delete game
+// حذف لعبة
 function deleteGame(id) {
-    confirm('هل أنت متأكد من حذف هذه اللعبة؟').then(result => {
-        if (result) {
-            db.collection('games').doc(id).delete()
-                .then(() => {
-                    alert('تم حذف اللعبة بنجاح!');
-                })
-                .catch(error => {
-                    console.error('Error deleting game: ', error);
-                });
-        }
-    });
+    if (confirm('هل أنت متأكد من حذف هذه اللعبة؟')) {
+        db.collection('games').doc(id).delete()
+            .then(() => {
+                alert('تم حذف اللعبة بنجاح!');
+            })
+            .catch(error => {
+                console.error('خطأ في الحذف: ', error);
+            });
+    }
 }
+
+// تحميل الإعدادات وقائمة الألعاب عند فتح الصفحة
+window.onload = () => {
+    loadSiteSettings();
+    loadGames();
+};
