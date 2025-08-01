@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,18 +7,64 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
-        <h1 id="main-title">تحميل...</h1>
-        <p id="main-description">الرجاء الانتظار...</p>
-        
-        <div id="game-list">
+    <header class="main-header">
+        <div class="logo">
+            <h1>𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</h1>
+        </div>
+        <nav class="main-nav">
+            <a href="#" class="nav-item">الرئيسية</a>
+            <a href="#" class="nav-item">الفئات</a>
+            <a href="#" class="nav-item">تواصل معنا</a>
+        </nav>
+        <div class="user-actions">
+            <button class="login-btn">تسجيل الدخول</button>
+            <button class="signup-btn">إنشاء حساب</button>
+        </div>
+    </header>
+
+    <div class="main-content-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>القائمة الرئيسية</h3>
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
+                    <li><a href="#"><i class="fas fa-gamepad"></i> الألعاب</a></li>
+                    <li><a href="#"><i class="fas fa-users"></i> المجتمع</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> عن الموقع</a></li>
+                </ul>
             </div>
+            <div class="sidebar-section">
+                <h3>فئات الألعاب</h3>
+                <ul id="categories-list">
+                    <li><a href="#" data-category="all" class="active-category"><i class="fas fa-list"></i> كل الألعاب</a></li>
+                    <li><a href="#" data-category="action"><i class="fas fa-bomb"></i> أكشن</a></li>
+                    <li><a href="#" data-category="adventure"><i class="fas fa-hiking"></i> مغامرات</a></li>
+                    <li><a href="#" data-category="racing"><i class="fas fa-car-side"></i> سباق</a></li>
+                    <li><a href="#" data-category="strategy"><i class="fas fa-brain"></i> استراتيجية</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section social-links">
+                <h3>تابعنا</h3>
+                <ul>
+                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            <h2 class="section-title" id="page-title">أفضل الألعاب أونلاين</h2>
+            <div id="game-list" class="game-grid">
+                </div>
+        </main>
     </div>
-    
+
     <div id="site-locked-overlay" class="overlay">
         <form id="site-password-form" class="password-form">
             <h2>الموقع مقفل</h2>
@@ -36,7 +82,7 @@
             <button type="submit">فتح</button>
         </form>
     </div>
-
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="firebase-config.js"></script>
