@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم RedSword</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* تنسيقات بسيطة لوحة التحكم */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #34495e;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h1, h2 {
+            color: #ecf0f1;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"], textarea {
+            width: 95%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        button {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2ecc71;
+        }
+        #login-form {
+            text-align: center;
+        }
+        #admin-panel {
+            display: none; /* إخفاء لوحة التحكم حتى يتم تسجيل الدخول */
+        }
+        #game-settings-list {
+            list-style: none;
+            padding: 0;
+        }
+        #game-settings-list li {
+            background-color: #2c3e50;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success-message {
+            background-color: #27ae60;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="login-section">
+            <h1>تسجيل الدخول إلى لوحة التحكم</h1>
+            <form id="login-form">
+                <input type="text" id="login-email" placeholder="البريد الإلكتروني">
+                <input type="password" id="login-password" placeholder="كلمة المرور">
+                <button type="submit">دخول</button>
+                <div id="login-error-message"></div>
+            </form>
+        </div>
+
+        <div id="admin-panel">
+            <h1>لوحة تحكم RedSword</h1>
+            <p>أهلاً بك، <span id="admin-user-email"></span>!</p>
+            <button id="logout-button">خروج</button>
+
+            <div id="main-content-section">
+                <h2>تعديل محتوى الصفحة الرئيسية</h2>
+                <form id="main-content-form">
+                    <label for="site-title">عنوان الموقع</label>
+                    <input type="text" id="site-title">
+
+                    <label for="site-description">وصف الموقع</label>
+                    <textarea id="site-description"></textarea>
+
+                    <label for="background-image-url">رابط صورة الخلفية</label>
+                    <input type="text" id="background-image-url">
+                    
+                    <button type="submit">حفظ التغييرات</button>
+                    <div id="main-content-success" class="success-message">تم حفظ الإعدادات بنجاح!</div>
+                </form>
+            </div>
+
+            <br>
+
+            <div id="games-section">
+                <h2>إدارة الألعاب</h2>
+                <ul id="game-settings-list">
+                    </ul>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="admin.js"></script>
+
+</body>
+</html>
