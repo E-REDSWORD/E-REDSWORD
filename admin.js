@@ -51,6 +51,8 @@ function loadAdminData() {
             document.getElementById('site-title').value = data.title;
             document.getElementById('site-description').value = data.description;
             document.getElementById('background-image-url').value = data.backgroundImage;
+            document.getElementById('site-is-locked').checked = data.isSiteLocked || false;
+            document.getElementById('site-password').value = data.sitePassword || '';
         }
     });
 
@@ -75,6 +77,11 @@ function loadAdminData() {
                         <input type="checkbox" ${game.isVisible ? 'checked' : ''} data-field="isVisible">
                         عرض اللعبة على الموقع
                     </label>
+                    <label>
+                        <input type="checkbox" ${game.isLocked ? 'checked' : ''} data-field="isLocked">
+                        تفعيل كلمة مرور خاصة باللعبة
+                    </label>
+                    <input type="password" value="${game.gamePassword || ''}" placeholder="كلمة المرور" data-field="gamePassword">
 
                     <div class="game-actions">
                         <button type="submit" class="update-btn">حفظ التعديل</button>
@@ -93,7 +100,9 @@ function loadAdminData() {
                     name: form.querySelector('[data-field="name"]').value,
                     url: form.querySelector('[data-field="url"]').value,
                     image: form.querySelector('[data-field="image"]').value,
-                    isVisible: form.querySelector('[data-field="isVisible"]').checked
+                    isVisible: form.querySelector('[data-field="isVisible"]').checked,
+                    isLocked: form.querySelector('[data-field="isLocked"]').checked,
+                    gamePassword: form.querySelector('[data-field="gamePassword"]').value
                 };
                 updateFirestoreData('games', docId, updatedData);
             });
@@ -115,7 +124,9 @@ mainContentForm.addEventListener('submit', (e) => {
     const updatedData = {
         title: document.getElementById('site-title').value,
         description: document.getElementById('site-description').value,
-        backgroundImage: document.getElementById('background-image-url').value
+        backgroundImage: document.getElementById('background-image-url').value,
+        isSiteLocked: document.getElementById('site-is-locked').checked,
+        sitePassword: document.getElementById('site-password').value
     };
     updateFirestoreData('settings', 'site-info', updatedData, 'main-content-success');
 });
@@ -128,6 +139,8 @@ addGameForm.addEventListener('submit', (e) => {
         url: addGameForm['new-game-url'].value,
         image: addGameForm['new-game-image'].value,
         isVisible: addGameForm['new-game-isVisible'].checked,
+        isLocked: false, // الألعاب الجديدة لا تكون مقفلة افتراضياً
+        gamePassword: ''
     };
 
     db.collection('games').add(newGameData)
