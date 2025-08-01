@@ -12,97 +12,106 @@
 </head>
 <body>
 
-    <header class="admin-header">
-        <h1>لوحة التحكم</h1>
-        <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للموقع</a>
-    </header>
+    <!-- Loading screen for admin verification -->
+    <div id="admin-loading" class="loading-overlay">
+        <div class="spinner"></div>
+        <p>التحقق من صلاحيات المدير...</p>
+    </div>
 
-    <main class="admin-main">
-        <section class="admin-section">
-            <h2>إعدادات الموقع</h2>
-            <form id="site-settings-form">
-                <div class="form-group">
-                    <label for="site-title">عنوان الموقع:</label>
-                    <input type="text" id="site-title" required>
-                </div>
-                <div class="form-group">
-                    <label for="site-description">وصف الموقع:</label>
-                    <textarea id="site-description" rows="3" required></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="site-banner-image">رابط صورة البانر:</label>
-                    <input type="url" id="site-banner-image" required>
-                </div>
-                <div class="form-group">
-                    <label for="site-password">كلمة مرور قفل الموقع:</label>
-                    <input type="password" id="site-password">
-                </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="is-site-locked">
-                    <label for="is-site-locked">تفعيل قفل الموقع</label>
-                </div>
-                <button type="submit">حفظ الإعدادات</button>
-            </form>
-        </section>
+    <!-- Main Admin Panel Content (hidden by default) -->
+    <div id="admin-content" class="hidden">
+        <header class="admin-header">
+            <h1>لوحة التحكم</h1>
+            <a href="index.html" class="back-btn"><i class="fas fa-arrow-right"></i> العودة للموقع</a>
+        </header>
 
-        <section class="admin-section">
-            <h2>إدارة الألعاب</h2>
-            <button id="add-game-btn" class="add-game-btn"><i class="fas fa-plus-circle"></i> إضافة لعبة جديدة</button>
+        <main class="admin-main">
+            <section class="admin-section">
+                <h2>إعدادات الموقع</h2>
+                <form id="site-settings-form">
+                    <div class="form-group">
+                        <label for="site-title">عنوان الموقع:</label>
+                        <input type="text" id="site-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="site-description">وصف الموقع:</label>
+                        <textarea id="site-description" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="site-banner-image">رابط صورة البانر:</label>
+                        <input type="url" id="site-banner-image" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="site-password">كلمة مرور قفل الموقع:</label>
+                        <input type="password" id="site-password">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="is-site-locked">
+                        <label for="is-site-locked">تفعيل قفل الموقع</label>
+                    </div>
+                    <button type="submit">حفظ الإعدادات</button>
+                </form>
+            </section>
 
-            <div id="game-list" class="game-management-list">
-                <!-- قائمة الألعاب تظهر هنا -->
-                <p>جاري تحميل الألعاب...</p>
+            <section class="admin-section">
+                <h2>إدارة الألعاب</h2>
+                <button id="add-game-btn" class="add-game-btn"><i class="fas fa-plus-circle"></i> إضافة لعبة جديدة</button>
+
+                <div id="game-list" class="game-management-list">
+                    <p>جاري تحميل الألعاب...</p>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal for adding/editing games -->
+        <div id="game-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="modal-title">إضافة لعبة جديدة</h2>
+                <form id="game-form">
+                    <input type="hidden" id="game-id">
+                    <div class="form-group">
+                        <label for="game-name">اسم اللعبة:</label>
+                        <input type="text" id="game-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-category">الفئة:</label>
+                        <select id="game-category" required>
+                            <option value="action">أكشن</option>
+                            <option value="adventure">مغامرات</option>
+                            <option value="racing">سباق</option>
+                            <option value="strategy">استراتيجية</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-image">رابط صورة اللعبة:</label>
+                        <input type="url" id="game-image" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-url">رابط اللعبة:</label>
+                        <input type="url" id="game-url" required>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="is-game-locked">
+                        <label for="is-game-locked">تفعيل قفل اللعبة</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="game-password">كلمة مرور قفل اللعبة:</label>
+                        <input type="password" id="game-password">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="is-game-visible" checked>
+                        <label for="is-game-visible">إظهار اللعبة في الموقع</label>
+                    </div>
+                    <button type="submit" id="save-game-btn">حفظ</button>
+                </form>
             </div>
-        </section>
-    </main>
-
-    <!-- Modal لإضافة/تعديل الألعاب -->
-    <div id="game-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2 id="modal-title">إضافة لعبة جديدة</h2>
-            <form id="game-form">
-                <input type="hidden" id="game-id">
-                <div class="form-group">
-                    <label for="game-name">اسم اللعبة:</label>
-                    <input type="text" id="game-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="game-category">الفئة:</label>
-                    <select id="game-category" required>
-                        <option value="action">أكشن</option>
-                        <option value="adventure">مغامرات</option>
-                        <option value="racing">سباق</option>
-                        <option value="strategy">استراتيجية</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="game-image">رابط صورة اللعبة:</label>
-                    <input type="url" id="game-image" required>
-                </div>
-                <div class="form-group">
-                    <label for="game-url">رابط اللعبة:</label>
-                    <input type="url" id="game-url" required>
-                </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="is-game-locked">
-                    <label for="is-game-locked">تفعيل قفل اللعبة</label>
-                </div>
-                <div class="form-group">
-                    <label for="game-password">كلمة مرور قفل اللعبة:</label>
-                    <input type="password" id="game-password">
-                </div>
-                <div class="form-group checkbox-group">
-                    <input type="checkbox" id="is-game-visible" checked>
-                    <label for="is-game-visible">إظهار اللعبة في الموقع</label>
-                </div>
-                <button type="submit" id="save-game-btn">حفظ</button>
-            </form>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="firebase-config.js"></script>
     <script src="admin.js"></script>
 </body>
