@@ -3,23 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RedSword</title>
+    <title>𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header id="main-header">
-        <h1 id="site-title"></h1>
-        <p id="site-description"></p>
-    </header>
+    <div class="container">
+        <h1 id="main-title">تحميل...</h1>
+        <p id="main-description">الرجاء الانتظار...</p>
+        
+        <div id="game-list">
+            </div>
+    </div>
+    
+    <div id="site-locked-overlay" class="overlay">
+        <form id="site-password-form" class="password-form">
+            <h2>الموقع مقفل</h2>
+            <p>الرجاء إدخال كلمة المرور للمتابعة:</p>
+            <input type="password" id="site-password-input" placeholder="كلمة المرور" required>
+            <button type="submit">دخول</button>
+        </form>
+    </div>
 
-    <nav>
-        <ul id="games-list">
-            </ul>
-    </nav>
-
-    <main id="game-container">
-        </main>
+    <div id="game-locked-overlay" class="overlay">
+        <form id="game-password-form" class="password-form">
+            <h2>اللعبة مقفلة</h2>
+            <p>الرجاء إدخال كلمة المرور لفتح اللعبة:</p>
+            <input type="password" id="game-password-input" placeholder="كلمة المرور" required>
+            <button type="submit">فتح</button>
+        </form>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
