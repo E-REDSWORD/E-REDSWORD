@@ -1,206 +1,184 @@
 // تهيئة Firebase
 const db = firebase.firestore();
-const auth = firebase.auth();
 
 // عناصر الصفحة
-const loginSection = document.getElementById('login-section');
-const adminPanel = document.getElementById('admin-panel');
-const loginForm = document.getElementById('login-form');
-const logoutButton = document.getElementById('logout-button');
-const mainContentForm = document.getElementById('main-content-form');
-const gamesListElement = document.getElementById('games-list');
-const addGameForm = document.getElementById('add-game-form');
+const siteSettingsForm = document.getElementById('site-settings-form');
+const siteTitleInput = document.getElementById('site-title');
+const siteDescriptionInput = document.getElementById('site-description');
+const siteBannerImageInput = document.getElementById('site-banner-image');
+const sitePasswordInput = document.getElementById('site-password');
+const isSiteLockedCheckbox = document.getElementById('is-site-locked');
 
-// 1. التعامل مع تسجيل الدخول والخروج
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        loginSection.style.display = 'none';
-        adminPanel.style.display = 'block';
-        document.getElementById('admin-user-email').textContent = user.email;
-        loadAdminData();
-    } else {
-        loginSection.style.display = 'flex';
-        adminPanel.style.display = 'none';
+const addGameBtn = document.getElementById('add-game-btn');
+const gameListContainer = document.getElementById('game-list');
+const gameModal = document.getElementById('game-modal');
+const modalTitle = document.getElementById('modal-title');
+const gameForm = document.getElementById('game-form');
+const gameIdInput = document.getElementById('game-id');
+const gameNameInput = document.getElementById('game-name');
+const gameCategoryInput = document.getElementById('game-category');
+const gameImageInput = document.getElementById('game-image');
+const gameUrlInput = document.getElementById('game-url');
+const isGameLockedCheckbox = document.getElementById('is-game-locked');
+const gamePasswordInput = document.getElementById('game-password');
+const isGameVisibleCheckbox = document.getElementById('is-game-visible');
+const closeModalBtn = document.querySelector('.close-btn');
+
+// تحميل إعدادات الموقع الحالية
+function loadSiteSettings() {
+    db.collection('settings').doc('site-info').get().then(doc => {
+        if (doc.exists) {
+            const data = doc.data();
+            siteTitleInput.value = data.title || '';
+            siteDescriptionInput.value = data.description || '';
+            siteBannerImageInput.value = data.backgroundImage || '';
+            sitePasswordInput.value = data.sitePassword || '';
+            isSiteLockedCheckbox.checked = data.isSiteLocked || false;
+        }
+    });
+}
+
+// حفظ إعدادات الموقع
+siteSettingsForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const settings = {
+        title: siteTitleInput.value,
+        description: siteDescriptionInput.value,
+        backgroundImage: siteBannerImageInput.value,
+        sitePassword: sitePasswordInput.value,
+        isSiteLocked: isSiteLockedCheckbox.checked
+    };
+    db.collection('settings').doc('site-info').set(settings)
+        .then(() => {
+            alert('تم حفظ إعدادات الموقع بنجاح!');
+        })
+        .catch(error => {
+            console.error('خطأ في حفظ الإعدادات: ', error);
+        });
+});
+
+// تحميل قائمة الألعاب
+function loadGames() {
+    gameListContainer.innerHTML = '<p>جاري تحميل الألعاب...</p>';
+    db.collection('games').onSnapshot(snapshot => {
+        gameListContainer.innerHTML = '';
+        snapshot.forEach(doc => {
+            const game = { id: doc.id, ...doc.data() };
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card-admin';
+            gameCard.innerHTML = `
+                <img src="${game.image}" alt="${game.name}">
+                <div class="game-info">
+                    <h3>${game.name}</h3>
+                    <p>الفئة: ${game.category}</p>
+                    <p>الحالة: ${game.isVisible ? 'ظاهر' : 'مخفي'}</p>
+                </div>
+                <div class="game-actions">
+                    <button class="edit-btn" data-id="${game.id}">تعديل</button>
+                    <button class="delete-btn" data-id="${game.id}">حذف</button>
+                </div>
+            `;
+            gameListContainer.appendChild(gameCard);
+        });
+
+        // إضافة مستمعين لحدث التعديل والحذف
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', (e) => editGame(e.target.dataset.id));
+        });
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', (e) => deleteGame(e.target.dataset.id));
+        });
+    });
+}
+
+// فتح نافذة الإضافة/التعديل
+addGameBtn.addEventListener('click', () => {
+    modalTitle.textContent = 'إضافة لعبة جديدة';
+    gameForm.reset();
+    gameIdInput.value = '';
+    gameModal.style.display = 'flex';
+});
+
+closeModalBtn.addEventListener('click', () => {
+    gameModal.style.display = 'none';
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === gameModal) {
+        gameModal.style.display = 'none';
     }
 });
 
-loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = loginForm['login-email'].value;
-    const password = loginForm['login-password'].value;
-    const errorMessage = document.getElementById('login-error-message');
-    errorMessage.style.display = 'none';
-
-    auth.signInWithEmailAndPassword(email, password)
-        .catch((error) => {
-            errorMessage.textContent = 'خطأ في البريد الإلكتروني أو كلمة المرور.';
-            errorMessage.style.display = 'block';
-        });
-});
-
-logoutButton.addEventListener('click', () => {
-    auth.signOut();
-});
-
-// 2. دالة لجلب البيانات من Firestore وملء النماذج
-function loadAdminData() {
-    // جلب بيانات الصفحة الرئيسية
-    db.collection("settings").doc("site-info").get().then((doc) => {
+// تعديل لعبة
+function editGame(id) {
+    db.collection('games').doc(id).get().then(doc => {
         if (doc.exists) {
-            const data = doc.data();
-            document.getElementById('site-title').value = data.title || '';
-            document.getElementById('site-description').value = data.description || '';
-            document.getElementById('background-image-url').value = data.backgroundImage || '';
-            document.getElementById('site-is-locked').checked = data.isSiteLocked || false;
-            document.getElementById('site-password').value = data.sitePassword || '';
+            const game = doc.data();
+            modalTitle.textContent = 'تعديل اللعبة';
+            gameIdInput.value = id;
+            gameNameInput.value = game.name;
+            gameCategoryInput.value = game.category;
+            gameImageInput.value = game.image;
+            gameUrlInput.value = game.url;
+            isGameLockedCheckbox.checked = game.isLocked;
+            gamePasswordInput.value = game.gamePassword;
+            isGameVisibleCheckbox.checked = game.isVisible;
+            gameModal.style.display = 'flex';
         }
     });
-
-    // جلب بيانات الألعاب
-    db.collection("games").get().then((querySnapshot) => {
-        gamesListElement.innerHTML = '';
-        querySnapshot.forEach((doc) => {
-            const game = doc.data();
-            const div = document.createElement('div');
-            div.className = 'game-item';
-            div.innerHTML = `
-                <h3>${game.name}</h3>
-                <form data-docid="${doc.id}">
-                    <label>اسم اللعبة</label>
-                    <input type="text" value="${game.name}" data-field="name">
-                    <label>رابط اللعبة</label>
-                    <input type="text" value="${game.url}" data-field="url">
-                    <label>رابط صورة اللعبة</label>
-                    <input type="text" value="${game.image}" data-field="image">
-                    
-                    <label for="category-select-${doc.id}">فئة اللعبة</label>
-                    <select id="category-select-${doc.id}" data-field="category">
-                        <option value="all">كل الألعاب</option>
-                        <option value="action">أكشن</option>
-                        <option value="adventure">مغامرات</option>
-                        <option value="racing">سباق</option>
-                        <option value="strategy">استراتيجية</option>
-                    </select>
-
-                    <label>
-                        <input type="checkbox" ${game.isVisible ? 'checked' : ''} data-field="isVisible">
-                        عرض اللعبة على الموقع
-                    </label>
-                    <label>
-                        <input type="checkbox" ${game.isLocked ? 'checked' : ''} data-field="isLocked">
-                        تفعيل كلمة مرور خاصة باللعبة
-                    </label>
-                    <input type="password" value="${game.gamePassword || ''}" placeholder="كلمة المرور" data-field="gamePassword">
-
-                    <div class="game-actions">
-                        <button type="submit" class="update-btn">حفظ التعديل</button>
-                        <button type="button" class="delete-btn" data-docid="${doc.id}">حذف</button>
-                    </div>
-                </form>
-            `;
-            gamesListElement.appendChild(div);
-
-            // تحديد الفئة الصحيحة في القائمة المنسدلة
-            const categorySelect = document.getElementById(`category-select-${doc.id}`);
-            if (categorySelect && game.category) {
-                categorySelect.value = game.category;
-            }
-
-            // إضافة مستمع للأحداث لكل نموذج تعديل لعبة
-            div.querySelector('form').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const form = e.target;
-                const docId = form.getAttribute('data-docid');
-                const updatedData = {
-                    name: form.querySelector('[data-field="name"]').value,
-                    url: form.querySelector('[data-field="url"]').value,
-                    image: form.querySelector('[data-field="image"]').value,
-                    category: form.querySelector('[data-field="category"]').value,
-                    isVisible: form.querySelector('[data-field="isVisible"]').checked,
-                    isLocked: form.querySelector('[data-field="isLocked"]').checked,
-                    gamePassword: form.querySelector('[data-field="gamePassword"]').value
-                };
-                updateFirestoreData('games', docId, updatedData);
-            });
-
-            // إضافة مستمع للأحداث لزر الحذف
-            div.querySelector('.delete-btn').addEventListener('click', (e) => {
-                const docId = e.target.getAttribute('data-docid');
-                if (confirm('هل أنت متأكد من حذف هذه اللعبة؟')) {
-                    deleteFirestoreDocument('games', docId);
-                }
-            });
-        });
-    });
 }
 
-// 3. دالة لحفظ التعديلات في Firestore
-mainContentForm.addEventListener('submit', (e) => {
+// حفظ/تعديل لعبة
+gameForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const updatedData = {
-        title: document.getElementById('site-title').value,
-        description: document.getElementById('site-description').value,
-        backgroundImage: document.getElementById('background-image-url').value,
-        isSiteLocked: document.getElementById('site-is-locked').checked,
-        sitePassword: document.getElementById('site-password').value
+    const gameData = {
+        name: gameNameInput.value,
+        category: gameCategoryInput.value,
+        image: gameImageInput.value,
+        url: gameUrlInput.value,
+        isLocked: isGameLockedCheckbox.checked,
+        gamePassword: gamePasswordInput.value,
+        isVisible: isGameVisibleCheckbox.checked
     };
-    updateFirestoreData('settings', 'site-info', updatedData, 'main-content-success');
+    
+    if (gameIdInput.value) {
+        // تعديل
+        db.collection('games').doc(gameIdInput.value).update(gameData)
+            .then(() => {
+                alert('تم تحديث اللعبة بنجاح!');
+                gameModal.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('خطأ في التحديث: ', error);
+            });
+    } else {
+        // إضافة
+        db.collection('games').add(gameData)
+            .then(() => {
+                alert('تم إضافة اللعبة بنجاح!');
+                gameModal.style.display = 'none';
+            })
+            .catch(error => {
+                console.error('خطأ في الإضافة: ', error);
+            });
+    }
 });
 
-// 4. دالة لإضافة لعبة جديدة
-addGameForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newGameData = {
-        name: addGameForm['new-game-name'].value,
-        url: addGameForm['new-game-url'].value,
-        image: addGameForm['new-game-image'].value,
-        category: addGameForm['new-game-category'].value, // حفظ الفئة الجديدة
-        isVisible: addGameForm['new-game-isVisible'].checked,
-        isLocked: false,
-        gamePassword: ''
-    };
-
-    db.collection('games').add(newGameData)
-        .then(() => {
-            addGameForm.reset();
-            loadAdminData();
-            const successElement = document.getElementById('add-game-success');
-            successElement.style.display = 'block';
-            setTimeout(() => {
-                successElement.style.display = 'none';
-            }, 3000);
-        })
-        .catch((error) => {
-            console.error("Error adding document: ", error);
-        });
-});
-
-// دالة عامة لتحديث البيانات في Firestore
-function updateFirestoreData(collection, docId, data, successMessageId) {
-    db.collection(collection).doc(docId).update(data)
-        .then(() => {
-            if(successMessageId) {
-                const messageElement = document.getElementById(successMessageId);
-                messageElement.style.display = 'block';
-                setTimeout(() => {
-                    messageElement.style.display = 'none';
-                }, 3000);
-            }
-            console.log("Document successfully updated!");
-        })
-        .catch((error) => {
-            console.error("Error updating document: ", error);
-        });
+// حذف لعبة
+function deleteGame(id) {
+    if (confirm('هل أنت متأكد من حذف هذه اللعبة؟')) {
+        db.collection('games').doc(id).delete()
+            .then(() => {
+                alert('تم حذف اللعبة بنجاح!');
+            })
+            .catch(error => {
+                console.error('خطأ في الحذف: ', error);
+            });
+    }
 }
 
-// دالة عامة لحذف مستند من Firestore
-function deleteFirestoreDocument(collection, docId) {
-    db.collection(collection).doc(docId).delete()
-        .then(() => {
-            console.log("Document successfully deleted!");
-            loadAdminData();
-        })
-        .catch((error) => {
-            console.error("Error removing document: ", error);
-        });
-}
+// تحميل الإعدادات وقائمة الألعاب عند فتح الصفحة
+window.onload = () => {
+    loadSiteSettings();
+    loadGames();
+};
