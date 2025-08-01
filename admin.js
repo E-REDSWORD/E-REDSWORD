@@ -73,6 +73,15 @@ function loadAdminData() {
                     <label>رابط صورة اللعبة</label>
                     <input type="text" value="${game.image}" data-field="image">
                     
+                    <label for="category-select-${doc.id}">فئة اللعبة</label>
+                    <select id="category-select-${doc.id}" data-field="category">
+                        <option value="all">كل الألعاب</option>
+                        <option value="action">أكشن</option>
+                        <option value="adventure">مغامرات</option>
+                        <option value="racing">سباق</option>
+                        <option value="strategy">استراتيجية</option>
+                    </select>
+
                     <label>
                         <input type="checkbox" ${game.isVisible ? 'checked' : ''} data-field="isVisible">
                         عرض اللعبة على الموقع
@@ -91,6 +100,12 @@ function loadAdminData() {
             `;
             gamesListElement.appendChild(div);
 
+            // تحديد الفئة الصحيحة في القائمة المنسدلة
+            const categorySelect = document.getElementById(`category-select-${doc.id}`);
+            if (categorySelect && game.category) {
+                categorySelect.value = game.category;
+            }
+
             // إضافة مستمع للأحداث لكل نموذج تعديل لعبة
             div.querySelector('form').addEventListener('submit', (e) => {
                 e.preventDefault();
@@ -100,6 +115,7 @@ function loadAdminData() {
                     name: form.querySelector('[data-field="name"]').value,
                     url: form.querySelector('[data-field="url"]').value,
                     image: form.querySelector('[data-field="image"]').value,
+                    category: form.querySelector('[data-field="category"]').value,
                     isVisible: form.querySelector('[data-field="isVisible"]').checked,
                     isLocked: form.querySelector('[data-field="isLocked"]').checked,
                     gamePassword: form.querySelector('[data-field="gamePassword"]').value
@@ -138,6 +154,7 @@ addGameForm.addEventListener('submit', (e) => {
         name: addGameForm['new-game-name'].value,
         url: addGameForm['new-game-url'].value,
         image: addGameForm['new-game-image'].value,
+        category: addGameForm['new-game-category'].value, // حفظ الفئة الجديدة
         isVisible: addGameForm['new-game-isVisible'].checked,
         isLocked: false,
         gamePassword: ''
