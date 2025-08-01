@@ -12,8 +12,10 @@
 </head>
 <body>
 
+    <!-- Header & Navigation -->
     <header class="main-header">
         <div class="header-container">
+            <!-- Mobile Toggles -->
             <button class="mobile-menu-toggle" id="main-nav-toggle" aria-label="Toggle main menu">
                 <i class="fas fa-bars"></i>
             </button>
@@ -22,22 +24,41 @@
                     <h1>𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</h1>
                 </a>
             </div>
+            <!-- Main Navigation -->
             <nav class="main-nav" id="main-nav">
                 <a href="#" class="nav-item active">الرئيسية</a>
                 <a href="#" class="nav-item">الألعاب</a>
                 <a href="#" class="nav-item">تواصل معنا</a>
-                <a href="admin.html" class="nav-item admin-link">لوحة التحكم</a>
             </nav>
-            <div class="user-actions" id="user-actions">
-                <button id="login-btn" class="login-btn">تسجيل الدخول</button>
-                <button id="signup-btn" class="signup-btn">إنشاء حساب</button>
+            <!-- User Actions & Search Bar -->
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="ابحث عن لعبة..." class="search-input">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="user-actions" id="user-actions">
+                    <button id="login-btn" class="action-btn">تسجيل الدخول</button>
+                    <button id="signup-btn" class="action-btn">إنشاء حساب</button>
+                    <!-- User Profile after login -->
+                    <div id="user-profile" class="user-profile hidden">
+                        <i class="fas fa-user-circle user-icon"></i>
+                        <span id="user-display-name"></span>
+                        <div class="dropdown-menu">
+                            <a href="#" id="profile-link">الملف الشخصي</a>
+                            <a href="admin.html" id="admin-link" class="hidden">لوحة التحكم</a>
+                            <button id="logout-btn">تسجيل الخروج</button>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <!-- Sidebar Toggle (for main content) -->
             <button class="mobile-menu-toggle" id="sidebar-toggle" aria-label="Toggle sidebar menu">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </header>
 
+    <!-- Hero Banner -->
     <div class="hero-banner" id="hero-banner">
         <div class="banner-content">
             <h2 id="banner-title">تحميل...</h2>
@@ -46,12 +67,13 @@
     </div>
 
     <div class="main-content-wrapper">
+        <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <h3>القائمة الرئيسية</h3>
                 <ul class="main-menu-list">
                     <li><a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
-                    <li><a href="#"><i class="fas fa-gamepad"></i> الألعاب</a></li>
+                    <li><a href="#" class="nav-item-games"><i class="fas fa-gamepad"></i> الألعاب</a></li>
                     <li><a href="#"><i class="fas fa-users"></i> المجتمع</a></li>
                     <li><a href="#"><i class="fas fa-info-circle"></i> عن الموقع</a></li>
                 </ul>
@@ -76,16 +98,50 @@
             </div>
         </aside>
 
+        <!-- Main Content Area -->
         <main class="content-area">
             <h2 class="section-title">الألعاب المتاحة</h2>
             <div id="game-list" class="game-grid">
-                <!-- هنا سيتم عرض الألعاب ديناميكياً -->
+                <!-- Games will be displayed here dynamically -->
             </div>
         </main>
     </div>
+    
+    <!-- Modals for login, signup, and custom alerts -->
+    <div id="modal-overlay" class="modal-overlay">
+        <!-- Login Form -->
+        <div id="login-modal" class="modal-form hidden">
+            <span class="close-btn">&times;</span>
+            <h2>تسجيل الدخول</h2>
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
+                <input type="password" id="login-password" placeholder="كلمة المرور" required>
+                <button type="submit">تسجيل الدخول</button>
+            </form>
+        </div>
+        <!-- Signup Form -->
+        <div id="signup-modal" class="modal-form hidden">
+            <span class="close-btn">&times;</span>
+            <h2>إنشاء حساب</h2>
+            <form id="signup-form">
+                <input type="email" id="signup-email" placeholder="البريد الإلكتروني" required>
+                <input type="password" id="signup-password" placeholder="كلمة المرور" required>
+                <button type="submit">إنشاء حساب</button>
+            </form>
+        </div>
+        <!-- Custom Alert/Confirm Modal -->
+        <div id="custom-alert" class="modal-form hidden">
+            <h2></h2>
+            <p></p>
+            <div class="modal-actions">
+                <button id="alert-ok-btn" class="modal-btn primary">موافق</button>
+                <button id="alert-cancel-btn" class="modal-btn secondary hidden">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- شاشة قفل الموقع (مخفية) -->
-    <div id="site-locked-overlay" class="overlay">
+    <!-- Hidden overlays for site/game lock -->
+    <div id="site-locked-overlay" class="overlay hidden">
         <form id="site-password-form" class="password-form">
             <h2>الموقع مقفل</h2>
             <p>الرجاء إدخال كلمة المرور للمتابعة:</p>
@@ -93,9 +149,7 @@
             <button type="submit">دخول</button>
         </form>
     </div>
-
-    <!-- شاشة قفل اللعبة (مخفية) -->
-    <div id="game-locked-overlay" class="overlay">
+    <div id="game-locked-overlay" class="overlay hidden">
         <form id="game-password-form" class="password-form">
             <h2>اللعبة مقفلة</h2>
             <p>الرجاء إدخال كلمة المرور لفتح اللعبة:</p>
@@ -103,9 +157,23 @@
             <button type="submit">فتح</button>
         </form>
     </div>
+    
+    <!-- Main Game Player Overlay -->
+    <div id="game-player-overlay" class="game-player-overlay hidden">
+        <div class="game-player-content">
+            <div class="game-player-header">
+                <h2 id="game-player-title"></h2>
+                <button id="close-game-btn" class="close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="game-iframe-container">
+                <iframe id="game-player-iframe" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="firebase-config.js"></script>
     <script src="script.js"></script>
 </body>
