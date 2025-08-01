@@ -1,62 +1,88 @@
-// هذا السطر يخبر الكود أننا نريد استخدام قاعدة البيانات
+// تهيئة Firebase
 const db = firebase.firestore();
 
-// 1. جلب بيانات الموقع الرئيسية من Firestore
-db.collection("settings").doc("site-info").get().then((doc) => {
-    // إذا وجد الكود البيانات
-    if (doc.exists) {
-        const data = doc.data();
-        // يضع عنوان الموقع في مكانه
-        document.getElementById('site-title').textContent = data.title;
-        // يضع الوصف في مكانه
-        document.getElementById('site-description').textContent = data.description;
-        // يغير صورة الخلفية
-        document.body.style.backgroundImage = `url('${data.backgroundImage}')`;
-    }
-});
+// عناصر الصفحة
+const mainTitle = document.getElementById('main-title');
+const mainDescription = document.getElementById('main-description');
+const gameContainer = document.getElementById('game-list');
+const gameContentContainer = document.getElementById('game-content');
+const backButton = document.getElementById('back-button');
+const siteLockedOverlay = document.getElementById('site-locked-overlay');
+const sitePasswordForm = document.getElementById('site-password-form');
+const gameLockedOverlay = document.getElementById('game-locked-overlay');
+const gamePasswordForm = document.getElementById('game-password-form');
 
-// 2. جلب قائمة الألعاب من Firestore
-const gamesListElement = document.getElementById('games-list');
-db.collection("games").where("isVisible", "==", true).get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-        const game = doc.data();
-        const li = document.createElement('li');
-        const a = document.createElement('a');
+// دالة لتحميل محتوى اللعبة أو الصفحة الرئيسية
+function loadContent(gameId) {
+    // جلب إعدادات الموقع
+    db.collection("settings").doc("site-info").get().then((doc) => {
+        if (doc.exists) {
+            const data = doc.data();
+            mainTitle.textContent = data.title;
+            mainDescription.textContent = data.description;
+            document.body.style.backgroundImage = `url(${data.backgroundImage})`;
+            
+            // التحقق من قفل الموقع
+            if (data.isSiteLocked && !sessionStorage.getItem('siteUnlocked')) {
+                siteLockedOverlay.style.display = 'flex';
+                sitePasswordForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const password = sitePasswordForm['site-password-input'].value;
+                    if (password === data.sitePassword) {
+                        sessionStorage.setItem('siteUnlocked', 'true');
+                        siteLockedOverlay.style.display = 'none';
+                        loadGameList(); // إعادة تحميل القائمة بعد فتح القفل
+                    } else {
+                        alert('كلمة المرور خاطئة!');
+                    }
+                });
+                return;
+            }
+        }
         
-        // يحدد أن الرابط سيشير إلى اللعبة (مثلاً: #game1)
-        a.href = `#${doc.id}`;
-        a.textContent = game.name;
-        
-        li.appendChild(a);
-        // يضيف اللعبة إلى القائمة
-        gamesListElement.appendChild(li);
+        // إذا كان الموقع مفتوحاً، قم بتحميل قائمة الألعاب
+        loadGameList();
     });
-});
-
-// 3. هذا الكود هو الذي يقوم بتحميل اللعبة داخل الصفحة
-function loadGame(gameId) {
-    const gameContainer = document.getElementById('game-container');
-    
-    // إذا كان هناك اسم للعبة في الرابط
-    if (gameId) {
-        // نغير محتوى هذا الجزء من الصفحة إلى إطار (iframe) يحمل اللعبة
-        gameContainer.innerHTML = `<iframe src="/games/${gameId}.html" frameborder="0"></iframe>`;
-    } else {
-        // إذا لم يكن هناك لعبة محددة، نظهر رسالة ترحيبية أو أي شيء آخر
-        gameContainer.innerHTML = '<h2>اختر لعبة من القائمة.</h2>';
-    }
 }
 
-// 4. هذا الكود يراقب التغييرات في الرابط
-// عندما يضغط المستخدم على رابط اللعبة (مثلاً: #game1)، يتغير الرابط ويقوم هذا الكود بتشغيل وظيفة loadGame
-window.addEventListener('hashchange', () => {
-    const gameId = window.location.hash.slice(1);
-    loadGame(gameId);
-});
+// دالة لتحميل قائمة الألعاب
+function loadGameList() {
+    gameContainer.innerHTML = ''; // تفريغ القائمة
+    db.collection("games").get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            const game = doc.data();
+            if (game.isVisible) {
+                const gameElement = document.createElement('div');
+                gameElement.className = 'game-card';
+                gameElement.innerHTML = `
+                    <img src="${game.image}" alt="${game.name}">
+                    <h3>${game.name}</h3>
+                `;
+                gameElement.addEventListener('click', () => {
+                    // التحقق من قفل اللعبة
+                    if (game.isLocked && !sessionStorage.getItem(`gameUnlocked-${doc.id}`)) {
+                        gameLockedOverlay.style.display = 'flex';
+                        gamePasswordForm['game-password-input'].value = '';
+                        gamePasswordForm.addEventListener('submit', (e) => {
+                            e.preventDefault();
+                            const password = gamePasswordForm['game-password-input'].value;
+                            if (password === game.gamePassword) {
+                                sessionStorage.setItem(`gameUnlocked-${doc.id}`, 'true');
+                                gameLockedOverlay.style.display = 'none';
+                                window.location.href = `game.html?id=${doc.id}`;
+                            } else {
+                                alert('كلمة المرور خاطئة!');
+                            }
+                        });
+                    } else {
+                        window.location.href = `game.html?id=${doc.id}`;
+                    }
+                });
+                gameContainer.appendChild(gameElement);
+            }
+        });
+    });
+}
 
-// 5. هذا الكود مهم جداً!
-// عندما يفتح المستخدم الموقع لأول مرة، يتأكد هذا الكود من قراءة الرابط وتحميل أي لعبة محددة فيه
-window.addEventListener('DOMContentLoaded', () => {
-    const initialGameId = window.location.hash.slice(1);
-    loadGame(initialGameId);
-});
+// تحميل المحتوى عند فتح الصفحة
+loadContent();
