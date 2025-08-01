@@ -15,14 +15,12 @@ const gamePasswordForm = document.getElementById('game-password-form');
 
 const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
 const sidebar = document.getElementById('sidebar');
-const mainNav = document.querySelector('.main-nav');
-const userActions = document.querySelector('.user-actions');
 
 // أزرار وهمية للتوضيح
 const loginBtn = document.getElementById('login-btn');
 const signupBtn = document.getElementById('signup-btn');
 
-let allGames = [];
+let allGames = []; // متغير لتخزين جميع الألعاب مؤقتاً
 
 // دالة لتحميل محتوى الموقع
 function loadSiteContent() {
@@ -32,11 +30,9 @@ function loadSiteContent() {
             mainHeader.querySelector('.logo h1').textContent = data.title;
             bannerTitle.textContent = data.title;
             bannerDescription.textContent = data.description;
-            // تطبيق الصورة كخلفية للبانر الجديد
             heroBanner.style.backgroundImage = `url(${data.backgroundImage})`;
             document.title = data.title;
             
-            // التحقق من قفل الموقع
             if (data.isSiteLocked && !sessionStorage.getItem('siteUnlocked')) {
                 siteLockedOverlay.style.display = 'flex';
                 sitePasswordForm.addEventListener('submit', (e) => {
@@ -83,7 +79,7 @@ function displayGames(gamesToShow) {
     gamesToShow.forEach((game) => {
         const gameElement = document.createElement('a');
         gameElement.className = 'game-card';
-        gameElement.href = 'javascript:void(0)'; // منع الانتقال مباشرة
+        gameElement.href = 'javascript:void(0)';
         
         const lockIcon = game.isLocked ? '<span class="lock-icon">🔒</span>' : '';
 
@@ -96,7 +92,7 @@ function displayGames(gamesToShow) {
         `;
         
         gameElement.addEventListener('click', (e) => {
-            e.preventDefault(); // منع سلوك الرابط الافتراضي
+            e.preventDefault();
             
             if (game.isLocked && !sessionStorage.getItem(`gameUnlocked-${game.id}`)) {
                 gameLockedOverlay.style.display = 'flex';
@@ -150,18 +146,15 @@ document.querySelectorAll('#categories-list a').forEach(link => {
 });
 
 // وظيفة لتفعيل وإخفاء القائمة الجانبية في وضع الموبايل
-mobileMenuToggle.addEventListener('click', () => {
+mobileMenuToggle.addEventListener('click', (e) => {
+    e.stopPropagation(); // منع إغلاق القائمة عند الضغط على الزر
     sidebar.classList.toggle('active');
-    mainNav.classList.toggle('active');
-    userActions.classList.toggle('active');
 });
 
-// إخفاء القائمة الجانبية عند الضغط في أي مكان آخر
+// إغلاق القائمة الجانبية عند الضغط خارجها
 document.addEventListener('click', (e) => {
     if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
         sidebar.classList.remove('active');
-        mainNav.classList.remove('active');
-        userActions.classList.remove('active');
     }
 });
 
@@ -173,7 +166,6 @@ loginBtn.addEventListener('click', () => {
 signupBtn.addEventListener('click', () => {
     alert('قريباً سيتم تفعيل صفحة إنشاء الحساب!');
 });
-
 
 // تحميل المحتوى عند فتح الصفحة
 loadSiteContent();
