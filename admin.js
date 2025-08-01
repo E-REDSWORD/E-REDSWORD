@@ -75,12 +75,15 @@ const closeModalBtn = document.querySelector('.close-btn');
 
 // Check admin privileges on page load
 auth.onAuthStateChanged(async (user) => {
+    // Hide the loading screen at the start, to be safe.
+    // The content will be shown later if the user is an admin.
+    adminLoading.classList.add('hidden');
+    
     if (user) {
         try {
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists && userDoc.data().isAdmin) {
                 // User is an admin, show content
-                adminLoading.classList.add('hidden');
                 adminContent.classList.remove('hidden');
                 loadSiteSettings();
                 loadGames();
@@ -91,7 +94,7 @@ auth.onAuthStateChanged(async (user) => {
             }
         } catch (error) {
             console.error('Error checking admin status:', error);
-            // In case of any error (e.g., Firestore permission denied), redirect
+            // In case of any error, redirect
             alert('حدث خطأ أثناء التحقق من الصلاحيات. الرجاء التأكد من أن لديك إذن الوصول.');
             window.location.href = 'index.html';
         }
