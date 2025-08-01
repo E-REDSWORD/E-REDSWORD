@@ -1,27 +1,25 @@
-// تهيئة Firebase - يجب أن يكون ملف firebase-config.js موجودًا
+// تهيئة Firebase
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// عناصر الصفحة الرئيسية
+// عناصر الصفحة
 const loginSection = document.getElementById('login-section');
 const adminPanel = document.getElementById('admin-panel');
 const loginForm = document.getElementById('login-form');
 const logoutButton = document.getElementById('logout-button');
 const mainContentForm = document.getElementById('main-content-form');
-const gamesListElement = document.getElementById('game-settings-list');
+const gamesListElement = document.getElementById('games-list');
+const addGameForm = document.getElementById('add-game-form');
 
 // 1. التعامل مع تسجيل الدخول والخروج
-// هذه الدالة تراقب حالة المستخدم (هل هو مسجل الدخول أم لا)
 auth.onAuthStateChanged((user) => {
     if (user) {
-        // إذا كان المستخدم مسجلاً، نظهر لوحة التحكم ونخفي نموذج تسجيل الدخول
         loginSection.style.display = 'none';
         adminPanel.style.display = 'block';
         document.getElementById('admin-user-email').textContent = user.email;
-        loadAdminData(); // نطلب تحميل البيانات
+        loadAdminData();
     } else {
-        // إذا لم يكن هناك مستخدم مسجل، نظهر نموذج تسجيل الدخول ونخفي لوحة التحكم
-        loginSection.style.display = 'block';
+        loginSection.style.display = 'flex';
         adminPanel.style.display = 'none';
     }
 });
@@ -30,10 +28,13 @@ loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = loginForm['login-email'].value;
     const password = loginForm['login-password'].value;
+    const errorMessage = document.getElementById('login-error-message');
+    errorMessage.style.display = 'none';
 
     auth.signInWithEmailAndPassword(email, password)
         .catch((error) => {
-            document.getElementById('login-error-message').textContent = error.message;
+            errorMessage.textContent = 'خطأ في البريد الإلكتروني أو كلمة المرور.';
+            errorMessage.style.display = 'block';
         });
 });
 
@@ -55,18 +56,18 @@ function loadAdminData() {
 
     // جلب بيانات الألعاب
     db.collection("games").get().then((querySnapshot) => {
-        gamesListElement.innerHTML = ''; // تفريغ القائمة قبل ملئها
+        gamesListElement.innerHTML = '';
         querySnapshot.forEach((doc) => {
             const game = doc.data();
-            const li = document.createElement('li');
-            li.innerHTML = `
+            const div = document.createElement('div');
+            div.className = 'game-item';
+            div.innerHTML = `
+                <h3>${game.name}</h3>
                 <form data-docid="${doc.id}">
                     <label>اسم اللعبة</label>
                     <input type="text" value="${game.name}" data-field="name">
-
                     <label>رابط اللعبة</label>
                     <input type="text" value="${game.url}" data-field="url">
-
                     <label>رابط صورة اللعبة</label>
                     <input type="text" value="${game.image}" data-field="image">
                     
@@ -75,13 +76,16 @@ function loadAdminData() {
                         عرض اللعبة على الموقع
                     </label>
 
-                    <button type="submit">حفظ التعديل</button>
+                    <div class="game-actions">
+                        <button type="submit" class="update-btn">حفظ التعديل</button>
+                        <button type="button" class="delete-btn" data-docid="${doc.id}">حذف</button>
+                    </div>
                 </form>
             `;
-            gamesListElement.appendChild(li);
+            gamesListElement.appendChild(div);
 
             // إضافة مستمع للأحداث لكل نموذج تعديل لعبة
-            li.querySelector('form').addEventListener('submit', (e) => {
+            div.querySelector('form').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const form = e.target;
                 const docId = form.getAttribute('data-docid');
@@ -92,6 +96,14 @@ function loadAdminData() {
                     isVisible: form.querySelector('[data-field="isVisible"]').checked
                 };
                 updateFirestoreData('games', docId, updatedData);
+            });
+
+            // إضافة مستمع للأحداث لزر الحذف
+            div.querySelector('.delete-btn').addEventListener('click', (e) => {
+                const docId = e.target.getAttribute('data-docid');
+                if (confirm('هل أنت متأكد من حذف هذه اللعبة؟')) {
+                    deleteFirestoreDocument('games', docId);
+                }
             });
         });
     });
@@ -106,6 +118,31 @@ mainContentForm.addEventListener('submit', (e) => {
         backgroundImage: document.getElementById('background-image-url').value
     };
     updateFirestoreData('settings', 'site-info', updatedData, 'main-content-success');
+});
+
+// 4. دالة لإضافة لعبة جديدة
+addGameForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newGameData = {
+        name: addGameForm['new-game-name'].value,
+        url: addGameForm['new-game-url'].value,
+        image: addGameForm['new-game-image'].value,
+        isVisible: addGameForm['new-game-isVisible'].checked,
+    };
+
+    db.collection('games').add(newGameData)
+        .then(() => {
+            addGameForm.reset();
+            loadAdminData();
+            const successElement = document.getElementById('add-game-success');
+            successElement.style.display = 'block';
+            setTimeout(() => {
+                successElement.style.display = 'none';
+            }, 3000);
+        })
+        .catch((error) => {
+            console.error("Error adding document: ", error);
+        });
 });
 
 // دالة عامة لتحديث البيانات في Firestore
@@ -123,5 +160,17 @@ function updateFirestoreData(collection, docId, data, successMessageId) {
         })
         .catch((error) => {
             console.error("Error updating document: ", error);
+        });
+}
+
+// دالة عامة لحذف مستند من Firestore
+function deleteFirestoreDocument(collection, docId) {
+    db.collection(collection).doc(docId).delete()
+        .then(() => {
+            console.log("Document successfully deleted!");
+            loadAdminData();
+        })
+        .catch((error) => {
+            console.error("Error removing document: ", error);
         });
 }
