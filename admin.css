@@ -1,0 +1,182 @@
+/* تنسيقات عامة للوحة التحكم */
+:root {
+    --primary-color: #e62e2e;
+    --secondary-color: #1a1a1a;
+    --background-color: #0d0d0d;
+    --text-color: #f0f0f0;
+    --light-text-color: #ccc;
+    --border-color: #333;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --hover-bg: rgba(230, 46, 46, 0.2);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    direction: rtl;
+    min-height: 100vh;
+}
+
+.admin-header {
+    background-color: var(--secondary-color);
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.admin-header h1 {
+    font-size: 2em;
+    color: var(--primary-color);
+}
+.admin-header .back-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+.admin-header .back-btn:hover {
+    background-color: #b32626;
+}
+
+.admin-main {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+.admin-section {
+    background-color: var(--secondary-color);
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+.admin-section h2 {
+    font-size: 1.8em;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group input[type="password"],
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: #2a2a2a;
+    color: var(--text-color);
+    font-family: 'Cairo', sans-serif;
+}
+.form-group input[type="checkbox"] {
+    margin-left: 10px;
+}
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+.admin-section button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.admin-section button:hover {
+    background-color: #b32626;
+}
+
+.game-management-list {
+    margin-top: 20px;
+}
+.game-card-admin {
+    display: flex;
+    align-items: center;
+    background-color: #2a2a2a;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+}
+.game-card-admin img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-left: 15px;
+}
+.game-info {
+    flex-grow: 1;
+}
+.game-info h3 {
+    font-size: 1.3em;
+    margin: 0;
+}
+.game-info p {
+    font-size: 0.9em;
+    color: var(--light-text-color);
+    margin: 5px 0 0;
+}
+.game-actions {
+    display: flex;
+    gap: 10px;
+}
+.game-actions button {
+    padding: 8px 12px;
+    font-size: 0.9em;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+.modal-content {
+    background-color: var(--secondary-color);
+    padding: 30px;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+.close-btn {
+    color: #aaa;
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
