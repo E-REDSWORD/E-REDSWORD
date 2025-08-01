@@ -13,12 +13,11 @@ const sitePasswordForm = document.getElementById('site-password-form');
 const gameLockedOverlay = document.getElementById('game-locked-overlay');
 const gamePasswordForm = document.getElementById('game-password-form');
 
-const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const mainNavToggle = document.getElementById('main-nav-toggle');
+const sidebarToggle = document.getElementById('sidebar-toggle');
 const sidebar = document.getElementById('sidebar');
-
-// أزرار وهمية للتوضيح
-const loginBtn = document.getElementById('login-btn');
-const signupBtn = document.getElementById('signup-btn');
+const mainNav = document.getElementById('main-nav');
+const userActions = document.getElementById('user-actions');
 
 let allGames = []; // متغير لتخزين جميع الألعاب مؤقتاً
 
@@ -97,7 +96,6 @@ function displayGames(gamesToShow) {
             if (game.isLocked && !sessionStorage.getItem(`gameUnlocked-${game.id}`)) {
                 gameLockedOverlay.style.display = 'flex';
                 gamePasswordForm['game-password-input'].value = '';
-                // منع تكرار المستمعين
                 const newGamePasswordForm = gamePasswordForm.cloneNode(true);
                 gamePasswordForm.parentNode.replaceChild(newGamePasswordForm, gamePasswordForm);
                 
@@ -145,27 +143,30 @@ document.querySelectorAll('#categories-list a').forEach(link => {
     });
 });
 
+// وظيفة لتفعيل وإخفاء القائمة العلوية في وضع الموبايل
+mainNavToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    mainNav.classList.toggle('active');
+    userActions.classList.toggle('active');
+});
+
 // وظيفة لتفعيل وإخفاء القائمة الجانبية في وضع الموبايل
-mobileMenuToggle.addEventListener('click', (e) => {
-    e.stopPropagation(); // منع إغلاق القائمة عند الضغط على الزر
+sidebarToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     sidebar.classList.toggle('active');
 });
 
-// إغلاق القائمة الجانبية عند الضغط خارجها
+// إغلاق القوائم عند الضغط خارجها
 document.addEventListener('click', (e) => {
-    if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+    if (mainNav.classList.contains('active') && !mainNav.contains(e.target) && !mainNavToggle.contains(e.target)) {
+        mainNav.classList.remove('active');
+        userActions.classList.remove('active');
+    }
+    if (sidebar.classList.contains('active') && !sidebar.contains(e.target) && !sidebarToggle.contains(e.target)) {
         sidebar.classList.remove('active');
     }
 });
 
-// مستمعي أحداث للأزرار التي لا تعمل (تسجيل الدخول وإنشاء حساب)
-loginBtn.addEventListener('click', () => {
-    alert('قريباً سيتم تفعيل صفحة تسجيل الدخول!');
-});
-
-signupBtn.addEventListener('click', () => {
-    alert('قريباً سيتم تفعيل صفحة إنشاء الحساب!');
-});
 
 // تحميل المحتوى عند فتح الصفحة
 loadSiteContent();
