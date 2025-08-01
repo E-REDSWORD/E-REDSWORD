@@ -4,12 +4,17 @@ const db = firebase.firestore();
 // عناصر الصفحة
 const mainHeader = document.querySelector('.main-header');
 const pageTitle = document.getElementById('page-title');
+const pageDescription = document.getElementById('page-description');
 const gameContainer = document.getElementById('game-list');
 const categoriesList = document.getElementById('categories-list');
 const siteLockedOverlay = document.getElementById('site-locked-overlay');
 const sitePasswordForm = document.getElementById('site-password-form');
 const gameLockedOverlay = document.getElementById('game-locked-overlay');
 const gamePasswordForm = document.getElementById('game-password-form');
+const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const mainNav = document.querySelector('.main-nav');
+const userActions = document.querySelector('.user-actions');
 
 let allGames = []; // متغير لتخزين جميع الألعاب مؤقتاً
 
@@ -19,8 +24,10 @@ function loadSiteContent() {
     db.collection("settings").doc("site-info").get().then((doc) => {
         if (doc.exists) {
             const data = doc.data();
+            // تحديث محتوى الصفحة
             mainHeader.querySelector('.logo h1').textContent = data.title;
             pageTitle.textContent = data.description;
+            pageDescription.textContent = "استمتع بأفضل تجربة لعب."; // يمكنك تغيير هذا الوصف من لوحة التحكم لاحقاً
             document.body.style.backgroundImage = `url(${data.backgroundImage})`;
             document.title = data.title;
             
@@ -33,7 +40,7 @@ function loadSiteContent() {
                     if (password === data.sitePassword) {
                         sessionStorage.setItem('siteUnlocked', 'true');
                         siteLockedOverlay.style.display = 'none';
-                        loadGameList(); // إعادة تحميل القائمة بعد فتح القفل
+                        loadGameList();
                     } else {
                         alert('كلمة المرور خاطئة!');
                     }
@@ -42,7 +49,6 @@ function loadSiteContent() {
             }
         }
         
-        // إذا كان الموقع مفتوحاً، قم بتحميل قائمة الألعاب
         loadGameList();
     });
 }
@@ -50,10 +56,9 @@ function loadSiteContent() {
 // دالة لتحميل قائمة الألعاب
 function loadGameList() {
     db.collection("games").get().then((querySnapshot) => {
-        allGames = []; // إعادة تهيئة قائمة الألعاب
+        allGames = [];
         querySnapshot.forEach((doc) => {
             const game = { id: doc.id, ...doc.data() };
-            // إضافة الألعاب المرئية فقط
             if (game.isVisible) {
                 allGames.push(game);
             }
@@ -103,11 +108,9 @@ function displayGames(gamesToShow) {
 
 // دالة لتصفية الألعاب حسب الفئة
 function filterGames(category) {
-    // إزالة الفئة النشطة من كل الروابط
     document.querySelectorAll('#categories-list a').forEach(link => {
         link.classList.remove('active-category');
     });
-    // إضافة الفئة النشطة إلى الرابط الذي تم الضغط عليه
     document.querySelector(`[data-category="${category}"]`).classList.add('active-category');
     
     let filteredGames = [];
@@ -126,6 +129,13 @@ document.querySelectorAll('#categories-list a').forEach(link => {
         const category = e.target.getAttribute('data-category');
         filterGames(category);
     });
+});
+
+// وظيفة لتفعيل وإخفاء القائمة الجانبية في وضع الموبايل
+mobileMenuToggle.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+    mainNav.classList.toggle('active');
+    userActions.classList.toggle('active');
 });
 
 // تحميل المحتوى عند فتح الصفحة
