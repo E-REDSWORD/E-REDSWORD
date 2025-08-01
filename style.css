@@ -1,0 +1,143 @@
+/* تنسيقات عامة */
+body {
+    font-family: 'Cairo', sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    transition: background-image 0.5s ease-in-out;
+    direction: rtl; /* دعم اللغة العربية */
+}
+
+.container {
+    padding: 50px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    min-height: 100vh;
+}
+
+/* تنسيقات العنوان والوصف */
+h1 {
+    font-size: 3.5em;
+    color: #e0e0e0;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+p {
+    font-size: 1.2em;
+    color: #999;
+    margin-bottom: 40px;
+}
+
+/* تنسيقات قائمة الألعاب */
+#game-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    justify-content: center;
+}
+
+/* تنسيقات بطاقة اللعبة */
+.game-card {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-decoration: none;
+    color: #e0e0e0;
+    position: relative;
+    border: 1px solid #333;
+}
+
+.game-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8);
+}
+
+.game-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #444;
+}
+
+.game-card h3 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+.lock-icon {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    font-size: 2em;
+    color: #ffcc00;
+}
+
+/* تنسيقات شاشات القفل (Overlay) */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none; /* مخفي افتراضياً */
+}
+
+.password-form {
+    background-color: #1e1e1e;
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+}
+
+.password-form h2 {
+    color: #007bff;
+    font-size: 2em;
+}
+
+.password-form p {
+    color: #ccc;
+    margin-bottom: 25px;
+}
+
+.password-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+}
+
+.password-form button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    background-color: #007bff;
+    color: white;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.password-form button:hover {
+    background-color: #0056b3;
+}
