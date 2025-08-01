@@ -7,7 +7,8 @@
     --light-text-color: #ccc;
     --border-color: #333;
     --shadow-color: rgba(0, 0, 0, 0.5);
-    --hover-bg: rgba(230, 46, 46, 0.2); /* تأثير hover جديد */
+    --hover-bg: rgba(230, 46, 46, 0.2);
+    --sidebar-width: 250px;
 }
 
 * {
@@ -16,11 +17,10 @@
     padding: 0;
 }
 
-/* خلفية الجسم الجديدة */
 body {
     font-family: 'Cairo', sans-serif;
     background-color: var(--background-color);
-    background-image: radial-gradient(circle at 10% 20%, #1a1a1a 0%, #0d0d0d 100%);
+    background-image: linear-gradient(to bottom, #1a1a1a, #0d0d0d);
     color: var(--text-color);
     direction: rtl;
     min-height: 100vh;
@@ -34,7 +34,7 @@ body {
     box-shadow: 0 2px 10px var(--shadow-color);
     position: sticky;
     top: 0;
-    z-index: 999;
+    z-index: 1001; /* أعلى z-index */
 }
 
 .header-container {
@@ -62,7 +62,8 @@ body {
     margin-left: 25px;
     transition: color 0.3s;
 }
-.main-nav a:hover {
+.main-nav a:hover,
+.main-nav a.active {
     color: var(--primary-color);
 }
 
@@ -101,7 +102,7 @@ body {
 /* Hero Banner */
 .hero-banner {
     width: 100%;
-    height: 350px; /* ارتفاع ثابت للبانر */
+    height: 350px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -110,7 +111,6 @@ body {
     justify-content: center;
     text-align: center;
     position: relative;
-    box-shadow: inset 0 -100px 100px -50px var(--background-color);
     margin-bottom: 30px;
 }
 .hero-banner::before {
@@ -120,7 +120,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
+    background: linear-gradient(to top, var(--background-color), transparent 50%);
 }
 .banner-content {
     position: relative;
@@ -148,7 +148,7 @@ body {
 
 /* Sidebar */
 .sidebar {
-    width: 250px;
+    width: var(--sidebar-width);
     background-color: var(--secondary-color);
     padding: 20px;
     border-radius: 12px;
@@ -326,31 +326,36 @@ body {
         flex-wrap: wrap;
     }
     .main-nav, .user-actions {
-        width: 100%;
-        order: 3;
         display: none;
-        flex-direction: column;
+        width: 100%;
         text-align: center;
-        transition: all 0.3s ease-in-out;
-    }
-    .main-nav.active, .user-actions.active {
-        display: flex;
-    }
-    .main-nav a, .user-actions button {
-        margin: 10px 0;
-    }
-    .user-actions {
-        padding-bottom: 15px;
     }
     .main-header .mobile-menu-toggle {
         display: block;
-        margin-left: 15px;
-        order: 2;
     }
-    .main-header .logo {
-        order: 1;
-        flex-grow: 1;
-        text-align: right;
+    .main-header .logo h1 {
+        font-size: 1.8em;
+    }
+
+    /* إصلاح القائمة الجانبية في وضع الموبايل */
+    .sidebar {
+        width: var(--sidebar-width);
+        position: fixed;
+        top: 0;
+        right: -300px; /* إخفاء القائمة خارج الشاشة */
+        height: 100vh;
+        z-index: 1000;
+        transform: translateX(0);
+        padding-top: 80px;
+        box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active {
+        transform: translateX(-300px); /* إظهار القائمة بسحبها لليسار */
+    }
+
+    .main-content-wrapper {
+        flex-direction: column;
+        padding: 0 15px 15px 15px;
     }
     
     .hero-banner {
@@ -363,29 +368,9 @@ body {
         font-size: 1em;
     }
 
-    .main-content-wrapper {
-        flex-direction: column;
-        padding: 0 15px 15px 15px;
-    }
-    .sidebar {
-        width: 100%;
-        position: fixed;
-        top: 0;
-        right: -300px;
-        height: 100vh;
-        z-index: 990;
-        transform: translateX(0);
-        padding-top: 80px;
-        box-shadow: -5px 0 20px rgba(0,0,0,0.5);
-    }
-    .sidebar.active {
-        transform: translateX(-300px);
-    }
-    .content-area {
-        margin-top: 20px;
-    }
     .section-title {
         font-size: 2em;
+        margin-top: 20px;
     }
     .game-grid {
         grid-template-columns: 1fr;
