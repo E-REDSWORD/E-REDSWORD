@@ -20,20 +20,27 @@
                 </a>
             </div>
             <nav class="main-nav">
-                <a href="#" class="nav-item">الرئيسية</a>
+                <a href="#" class="nav-item active">الرئيسية</a>
                 <a href="#" class="nav-item">الألعاب</a>
                 <a href="#" class="nav-item">تواصل معنا</a>
             </nav>
             <div class="user-actions">
-                <button class="login-btn">تسجيل الدخول</button>
-                <button class="signup-btn">إنشاء حساب</button>
+                <button id="login-btn" class="login-btn">تسجيل الدخول</button>
+                <button id="signup-btn" class="signup-btn">إنشاء حساب</button>
             </div>
             <button class="mobile-menu-toggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
         </div>
     </header>
 
+    <div class="hero-banner" id="hero-banner">
+        <div class="banner-content">
+            <h2 id="banner-title">تحميل...</h2>
+            <p id="banner-description">الرجاء الانتظار...</p>
+        </div>
+    </div>
+
     <div class="main-content-wrapper">
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-section">
                 <h3>القائمة الرئيسية</h3>
                 <ul class="main-menu-list">
@@ -64,13 +71,14 @@
         </aside>
 
         <main class="content-area">
-            <h2 class="section-title" id="page-title">أفضل الألعاب أونلاين</h2>
-            <p id="page-description" class="section-description">مرحباً بك في موقعنا الخاص بالألعاب، استمتع بأفضل تجربة لعب.</p>
+            <h2 class="section-title">الألعاب المتاحة</h2>
             <div id="game-list" class="game-grid">
-                </div>
+                <!-- هنا سيتم عرض الألعاب ديناميكياً -->
+            </div>
         </main>
     </div>
 
+    <!-- شاشة قفل الموقع (مخفية) -->
     <div id="site-locked-overlay" class="overlay">
         <form id="site-password-form" class="password-form">
             <h2>الموقع مقفل</h2>
@@ -80,6 +88,7 @@
         </form>
     </div>
 
+    <!-- شاشة قفل اللعبة (مخفية) -->
     <div id="game-locked-overlay" class="overlay">
         <form id="game-password-form" class="password-form">
             <h2>اللعبة مقفلة</h2>
