@@ -91,7 +91,8 @@ auth.onAuthStateChanged(async (user) => {
             }
         } catch (error) {
             console.error('Error checking admin status:', error);
-            alert('حدث خطأ أثناء التحقق من الصلاحيات.');
+            // In case of any error (e.g., Firestore permission denied), redirect
+            alert('حدث خطأ أثناء التحقق من الصلاحيات. الرجاء التأكد من أن لديك إذن الوصول.');
             window.location.href = 'index.html';
         }
     } else {
