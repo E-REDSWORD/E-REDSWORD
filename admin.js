@@ -48,9 +48,9 @@ function loadAdminData() {
     db.collection("settings").doc("site-info").get().then((doc) => {
         if (doc.exists) {
             const data = doc.data();
-            document.getElementById('site-title').value = data.title;
-            document.getElementById('site-description').value = data.description;
-            document.getElementById('background-image-url').value = data.backgroundImage;
+            document.getElementById('site-title').value = data.title || '';
+            document.getElementById('site-description').value = data.description || '';
+            document.getElementById('background-image-url').value = data.backgroundImage || '';
             document.getElementById('site-is-locked').checked = data.isSiteLocked || false;
             document.getElementById('site-password').value = data.sitePassword || '';
         }
@@ -139,7 +139,7 @@ addGameForm.addEventListener('submit', (e) => {
         url: addGameForm['new-game-url'].value,
         image: addGameForm['new-game-image'].value,
         isVisible: addGameForm['new-game-isVisible'].checked,
-        isLocked: false, // الألعاب الجديدة لا تكون مقفلة افتراضياً
+        isLocked: false,
         gamePassword: ''
     };
 
