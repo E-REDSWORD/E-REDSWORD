@@ -2,7 +2,7 @@
 :root {
     --primary-color: #e62e2e; /* لون أحمر جديد وقوي */
     --secondary-color: #1a1a1a;
-    --background-color: #0d0d0d;
+    --background-color: #080a0d; /* لون خلفية أغمق قليلاً */
     --text-color: #f0f0f0;
     --light-text-color: #ccc;
     --border-color: #333;
@@ -19,8 +19,8 @@
 
 body {
     font-family: 'Cairo', sans-serif;
-    background-color: var(--background-color);
-    background-image: linear-gradient(to bottom, #1a1a1a, #0d0d0d);
+    /* خلفية متدرجة جديدة أكثر إشراقاً ووضوحاً */
+    background: linear-gradient(to bottom, #111111, #080a0d);
     color: var(--text-color);
     direction: rtl;
     min-height: 100vh;
@@ -55,6 +55,10 @@ body {
     text-decoration: none;
 }
 
+.main-nav {
+    display: flex;
+    align-items: center;
+}
 .main-nav a {
     color: var(--light-text-color);
     text-decoration: none;
@@ -67,6 +71,9 @@ body {
     color: var(--primary-color);
 }
 
+.user-actions {
+    display: flex;
+}
 .user-actions .login-btn,
 .user-actions .signup-btn {
     padding: 10px 20px;
@@ -90,6 +97,7 @@ body {
     transform: translateY(-2px);
 }
 
+/* أيقونات القائمة على الهواتف */
 .mobile-menu-toggle {
     display: none;
     background: none;
@@ -98,6 +106,10 @@ body {
     font-size: 1.5em;
     cursor: pointer;
 }
+#sidebar-toggle {
+    display: none; /* إخفاء زر القائمة الجانبية في العرض العادي */
+}
+
 
 /* Hero Banner */
 .hero-banner {
@@ -330,27 +342,33 @@ body {
         width: 100%;
         text-align: center;
     }
+    
     .main-header .mobile-menu-toggle {
         display: block;
     }
-    .main-header .logo h1 {
-        font-size: 1.8em;
+    
+    #main-nav-toggle {
+        order: 1;
+    }
+    .main-header .logo {
+        flex-grow: 1;
+        order: 2;
+        text-align: center;
+    }
+    #sidebar-toggle {
+        display: block;
+        order: 3;
     }
 
-    /* إصلاح القائمة الجانبية في وضع الموبايل */
-    .sidebar {
-        width: var(--sidebar-width);
-        position: fixed;
-        top: 0;
-        right: -300px; /* إخفاء القائمة خارج الشاشة */
-        height: 100vh;
-        z-index: 1000;
-        transform: translateX(0);
-        padding-top: 80px;
-        box-shadow: -5px 0 20px rgba(0,0,0,0.5);
-    }
-    .sidebar.active {
-        transform: translateX(-300px); /* إظهار القائمة بسحبها لليسار */
+    /* إظهار القائمة العلوية عند الضغط على الزر */
+    #main-nav.active, #user-actions.active {
+        display: flex;
+        flex-direction: column;
+        order: 4;
+        background-color: var(--secondary-color);
+        padding: 10px;
+        border-radius: 8px;
+        margin-top: 10px;
     }
 
     .main-content-wrapper {
@@ -366,6 +384,22 @@ body {
     }
     #banner-description {
         font-size: 1em;
+    }
+
+    /* إصلاح القائمة الجانبية في وضع الموبايل */
+    .sidebar {
+        width: var(--sidebar-width);
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+        height: 100vh;
+        z-index: 1000;
+        padding-top: 80px;
+        box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+    }
+    .sidebar.active {
+        transform: translateX(0);
     }
 
     .section-title {
