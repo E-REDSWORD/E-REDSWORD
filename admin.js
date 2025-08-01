@@ -75,31 +75,31 @@ const closeModalBtn = document.querySelector('.close-btn');
 
 // Check admin privileges on page load
 auth.onAuthStateChanged(async (user) => {
-    // Hide the loading screen at the start, to be safe.
-    // The content will be shown later if the user is an admin.
-    adminLoading.classList.add('hidden');
-    
     if (user) {
         try {
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists && userDoc.data().isAdmin) {
-                // User is an admin, show content
+                // User is an admin, show content and hide loading screen
+                adminLoading.classList.add('hidden');
                 adminContent.classList.remove('hidden');
                 loadSiteSettings();
                 loadGames();
             } else {
-                // Not an admin, show error and redirect
+                // Not an admin, show error, hide loading screen, and redirect
+                adminLoading.classList.add('hidden');
                 alert('ليس لديك صلاحيات الوصول إلى هذه الصفحة.');
                 window.location.href = 'index.html';
             }
         } catch (error) {
             console.error('Error checking admin status:', error);
-            // In case of any error, redirect
+            // In case of any error, hide loading screen and redirect
+            adminLoading.classList.add('hidden');
             alert('حدث خطأ أثناء التحقق من الصلاحيات. الرجاء التأكد من أن لديك إذن الوصول.');
             window.location.href = 'index.html';
         }
     } else {
-        // Not logged in, show error and redirect
+        // Not logged in, show error, hide loading screen, and redirect
+        adminLoading.classList.add('hidden');
         alert('الرجاء تسجيل الدخول للوصول إلى لوحة التحكم.');
         window.location.href = 'index.html';
     }
