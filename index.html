@@ -13,17 +13,22 @@
 <body>
 
     <header class="main-header">
-        <div class="logo">
-            <h1>𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</h1>
-        </div>
-        <nav class="main-nav">
-            <a href="#" class="nav-item">الرئيسية</a>
-            <a href="#" class="nav-item">الفئات</a>
-            <a href="#" class="nav-item">تواصل معنا</a>
-        </nav>
-        <div class="user-actions">
-            <button class="login-btn">تسجيل الدخول</button>
-            <button class="signup-btn">إنشاء حساب</button>
+        <div class="header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <h1>𖤍|𝐑𝐄𝐃𝐒𝐖𝐎𝐑𝐃</h1>
+                </a>
+            </div>
+            <nav class="main-nav">
+                <a href="#" class="nav-item">الرئيسية</a>
+                <a href="#" class="nav-item">الألعاب</a>
+                <a href="#" class="nav-item">تواصل معنا</a>
+            </nav>
+            <div class="user-actions">
+                <button class="login-btn">تسجيل الدخول</button>
+                <button class="signup-btn">إنشاء حساب</button>
+            </div>
+            <button class="mobile-menu-toggle" aria-label="Toggle menu"><i class="fas fa-bars"></i></button>
         </div>
     </header>
 
@@ -31,7 +36,7 @@
         <aside class="sidebar">
             <div class="sidebar-section">
                 <h3>القائمة الرئيسية</h3>
-                <ul>
+                <ul class="main-menu-list">
                     <li><a href="#" class="active"><i class="fas fa-home"></i> الرئيسية</a></li>
                     <li><a href="#"><i class="fas fa-gamepad"></i> الألعاب</a></li>
                     <li><a href="#"><i class="fas fa-users"></i> المجتمع</a></li>
@@ -40,7 +45,7 @@
             </div>
             <div class="sidebar-section">
                 <h3>فئات الألعاب</h3>
-                <ul id="categories-list">
+                <ul id="categories-list" class="categories-list">
                     <li><a href="#" data-category="all" class="active-category"><i class="fas fa-list"></i> كل الألعاب</a></li>
                     <li><a href="#" data-category="action"><i class="fas fa-bomb"></i> أكشن</a></li>
                     <li><a href="#" data-category="adventure"><i class="fas fa-hiking"></i> مغامرات</a></li>
@@ -50,16 +55,17 @@
             </div>
             <div class="sidebar-section social-links">
                 <h3>تابعنا</h3>
-                <ul>
-                    <li><a href="#"><i class="fab fa-facebook"></i> Facebook</a></li>
-                    <li><a href="#"><i class="fab fa-twitter"></i> Twitter</a></li>
-                    <li><a href="#"><i class="fab fa-instagram"></i> Instagram</a></li>
+                <ul class="social-list">
+                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
+                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                    <li><a href="#"><i class="fab fa-instagram"></i></a></li>
                 </ul>
             </div>
         </aside>
 
         <main class="content-area">
             <h2 class="section-title" id="page-title">أفضل الألعاب أونلاين</h2>
+            <p id="page-description" class="section-description">مرحباً بك في موقعنا الخاص بالألعاب، استمتع بأفضل تجربة لعب.</p>
             <div id="game-list" class="game-grid">
                 </div>
         </main>
